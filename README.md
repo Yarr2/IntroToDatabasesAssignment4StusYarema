@@ -16,3 +16,12 @@ Assignment 4 Stus Yarema
 
 ERD:
 <img width="1683" height="990" alt="image" src="https://github.com/user-attachments/assets/d66aa7ae-5d63-4cf3-8864-267059c17347" />
+
+
+Індекси: 
+в файлі indexes.sql є query який шукає юзерів які провели багато часу( >= 100 годин = 6000 хвилин) в конкретній грі
+
+я зробив два індекси один на foreign key game_id для швидшого пошуку по найбільшій(1_500_000 записів) таблиці
+інший складений по часу гри та foreign key user_games_id для того щоб швидко знайти юзерів які провели багато часу в грі.
+
+Без індексів запит виконувався порядка 200 ms (повний explain analyze в файлі ExpAnaNoIndex.txt), з індексами час впав до 1.5 ms (повний explain analyze в ExpAnaIndex.txt)
