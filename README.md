@@ -24,4 +24,4 @@ ERD:
 я зробив два індекси один на foreign key game_id для швидшого пошуку по найбільшій(1_500_000 записів) таблиці
 інший складений по часу гри та foreign key user_games_id для того щоб швидко знайти юзерів які провели багато часу в грі.
 
-Без індексів запит виконувався порядка 200 ms (повний explain analyze в файлі ExpAnaNoIndex.txt), з індексами час впав до 1.5 ms (повний explain analyze в ExpAnaIndex.txt)
+Без індексів запит виконувався порядка 200 ms (повний explain analyze в файлі ExpAnaNoIndex.txt), з індексами час впав до <1 ms (повний explain analyze в ExpAnaIndex.txt)
