@@ -1,0 +1,47 @@
+QUERY PLAN                                                                                                                                                          |
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+Nested Loop  (cost=35654.78..37748.57 rows=10 width=52) (actual time=185.853..192.835 rows=10.00 loops=1)                                                           |
+  Buffers: shared hit=17478 read=2522                                                                                                                               |
+  ->  Gather Merge  (cost=35654.78..35655.95 rows=10 width=40) (actual time=185.817..188.046 rows=10.00 loops=1)                                                    |
+        Workers Planned: 2                                                                                                                                          |
+        Workers Launched: 2                                                                                                                                         |
+        Buffers: shared hit=16323 read=2522                                                                                                                         |
+        ->  Sort  (cost=34654.76..34654.77 rows=4 width=40) (actual time=148.403..148.407 rows=3.33 loops=3)                                                        |
+              Sort Key: ugd.time_played DESC                                                                                                                        |
+              Sort Method: quicksort  Memory: 25kB                                                                                                                  |
+              Buffers: shared hit=16323 read=2522                                                                                                                   |
+              Worker 0:  Sort Method: quicksort  Memory: 25kB                                                                                                       |
+              Worker 1:  Sort Method: quicksort  Memory: 25kB                                                                                                       |
+              ->  Hash Join  (cost=17917.60..34654.72 rows=4 width=40) (actual time=95.636..148.379 rows=3.33 loops=3)                                              |
+                    Hash Cond: (ug.user_id = u.user_id)                                                                                                             |
+                    Buffers: shared hit=16309 read=2522                                                                                                             |
+                    ->  Parallel Hash Join  (cost=15921.60..32658.71 rows=4 width=12) (actual time=79.675..132.411 rows=3.33 loops=3)                               |
+                          Hash Cond: (ugd.user_games_id = ug.user_games_id)                                                                                         |
+                          Buffers: shared hit=13696 read=2522                                                                                                       |
+                          ->  Parallel Seq Scan on user_games_data ugd  (cost=0.00..15921.50 rows=310708 width=8) (actual time=0.796..61.633 rows=249754.00 loops=3)|
+                                Filter: (time_played > 6000)                                                                                                        |
+                                Rows Removed by Filter: 250246                                                                                                      |
+                                Buffers: shared hit=7193 read=916                                                                                                   |
+                          ->  Parallel Hash  (cost=15921.50..15921.50 rows=8 width=12) (actual time=40.690..40.690 rows=7.67 loops=3)                               |
+                                Buckets: 1024  Batches: 1  Memory Usage: 104kB                                                                                      |
+                                Buffers: shared hit=6503 read=1606                                                                                                  |
+                                ->  Parallel Seq Scan on user_games ug  (cost=0.00..15921.50 rows=8 width=12) (actual time=3.887..39.680 rows=7.67 loops=3)         |
+                                      Filter: (game_id = 5)                                                                                                         |
+                                      Rows Removed by Filter: 499992                                                                                                |
+                                      Buffers: shared hit=6503 read=1606                                                                                            |
+                    ->  Hash  (cost=1371.00..1371.00 rows=50000 width=36) (actual time=15.769..15.770 rows=50000.00 loops=3)                                        |
+                          Buckets: 65536  Batches: 1  Memory Usage: 3988kB                                                                                          |
+                          Buffers: shared hit=2613                                                                                                                  |
+                          ->  Seq Scan on users u  (cost=0.00..1371.00 rows=50000 width=36) (actual time=0.280..6.959 rows=50000.00 loops=3)                        |
+                                Buffers: shared hit=2613                                                                                                            |
+  ->  Materialize  (cost=0.00..2092.51 rows=1 width=20) (actual time=0.003..0.478 rows=1.00 loops=10)                                                               |
+        Storage: Memory  Maximum Storage: 17kB                                                                                                                      |
+        Buffers: shared hit=1155                                                                                                                                    |
+        ->  Seq Scan on games g  (cost=0.00..2092.50 rows=1 width=20) (actual time=0.024..4.769 rows=1.00 loops=1)                                                  |
+              Filter: (game_id = 5)                                                                                                                                 |
+              Rows Removed by Filter: 74999                                                                                                                         |
+              Buffers: shared hit=1155                                                                                                                              |
+Planning:                                                                                                                                                           |
+  Buffers: shared hit=30                                                                                                                                            |
+Planning Time: 0.569 ms                                                                                                                                             |
+Execution Time: 193.336 ms                                                                                                                                          |
